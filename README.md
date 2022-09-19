@@ -37,4 +37,4 @@ Open Elixir's  REPL, IEX and run the appplicatin with ```iex -S mix```
 To execute the function that formats the content of our reservationtext file, based on SVQ, run the command: ``` ElixirTechChallenge.get_all_reservation``` and hit the enter button until the new line symbol ```\n``` gets displayed. That shouuld make the end of new output displaying.
 
 To test
-Run ```mix test``` in you local terminal and hit the enter button untl the test result is diaplayed.
+Run ```mix test``` in you local terminal and hit the enter button untl the test result is displayed.
