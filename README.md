@@ -34,6 +34,6 @@ Train from MAD to SVQ at 2020-02-17 17:00 to 19:30
 ```
 To start the application:
 Open Elixir's  REPL, IEX and run the appplicatin with ```iex -S mix```
-To execute the function that formats our text file, run the command: ``` ElixirTechChallenge.get_all_reservation``` and hit the enter button until the new line symbol ```\n``` gets displayed. That shouuld make the end of new output displaying.
+To execute the function that formats the content of our reservationtext file, based on SVQ, run the command: ``` ElixirTechChallenge.get_all_reservation``` and hit the enter button until the new line symbol ```\n``` gets displayed. That shouuld make the end of new output displaying.
 
 
