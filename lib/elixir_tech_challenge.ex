@@ -5,13 +5,34 @@ defmodule ElixirTechChallenge do
   """
   @input_file "./input.txt"
 
-  
+  @doc """
+  Returns reservation informmation in human readable format.
+  Users are expected to hit the enter key on their keyboards to get the output in it's entirety
+  This is because we used "IO.get/1" to display the information. using IO.get/1 requires user input.
+
+  ## Examples
+  You are expected to hit the enter key consistently until all output is displayed
+
+      iex> get_all_reservations()
+
+        TRIP to BCN
+        Flight from SVQ to BCN at 2023-01-05 20:40 to  22:10
+        Hotel at BCN on 2023-01-05 to 2023-01-10
+        Flight from BCN to SVQ at 2023-01-10 10:30 to  11:50
+
+        TRIP to MAD
+        Train from SVQ to MAD at 2023-02-15 09:30 to  11:00
+        Hotel at MAD on 2023-02-15 to 2023-02-17
+        Train from MAD to 2023-02-17 17:00 to SVQ 19:30
+  """
   def get_all_reservations() do
     read_and_format_bcn_reservations()
 
     read_and_format_mad_reservations()
   end
 
+  # After reading the input file and processing it's content we had to seperate
+  # the MAD reservationns from the other reservations and format it for readability
   defp read_and_format_mad_reservations() do
     mad_reservations = get_mad_reservation_from_file()
 
@@ -47,6 +68,8 @@ defmodule ElixirTechChallenge do
     IO.gets(concat_reservations)
   end
 
+  # After reading the input file and processing it's content we had
+  # We had to take filter for only "BCN" reservations and format it for readability
   defp read_and_format_bcn_reservations() do
     bcn_reservations = get_bcn_reservations_from_file()
 
@@ -83,6 +106,10 @@ defmodule ElixirTechChallenge do
     IO.gets(concat_reservations)
   end
 
+  # This function reads reservations content from the input file,
+  # splits the content across new line characters,
+  # sorts the content in descending order, takes out the words "RESERVATION"
+  # in the list, and outputs only "MAD" reservations.
   defp get_mad_reservation_from_file() do
     {:ok, reservations} =
       File.open(@input_file, [:read, :write], fn file ->
@@ -96,6 +123,11 @@ defmodule ElixirTechChallenge do
     |> Enum.take_while(fn value -> String.contains?(value, "MAD") == true end)
   end
 
+  # This function reads the content of the input file,
+  # splits the content across new line characters,
+  # sorts the content in descending order, and takes out the words "RESERVATION"
+  # get all BCN reservations by subtracting the list MAD reservations from the list of all reservations,
+  # the result will be the list of only BCN reservations
   defp get_bcn_reservations_from_file() do
     {:ok, reservations} =
       File.open(@input_file, [:read, :write], fn file ->
