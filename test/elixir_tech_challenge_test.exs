@@ -1,8 +1,9 @@
 defmodule ElixirTechChallengeTest do
   use ExUnit.Case
-  doctest ElixirTechChallenge
 
-  test "greets the world" do
-    assert ElixirTechChallenge.hello() == :world
+  test "test reservation output" do
+    value = ElixirTechChallenge.get_all_reservations()
+
+    assert ElixirTechChallenge.get_all_reservations() == value
   end
 end
