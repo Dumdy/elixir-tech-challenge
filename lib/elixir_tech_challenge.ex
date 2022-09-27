@@ -3,7 +3,7 @@ defmodule ElixirTechChallenge do
   This module contains functions which processes a text file containing travel reservation information based on SVQ and formats it to a human readable format
 
   """
-  @input_file "./input.txt"
+  @input_file "./inpu.txt"
 
   @doc """
   Returns reservation informmation in human readable format.
@@ -34,7 +34,7 @@ defmodule ElixirTechChallenge do
   # After reading the input file and processing it's content we had to seperate
   # the MAD reservationns from the other reservations and format it for readability
   defp read_and_format_mad_reservations() do
-    mad_reservations = get_mad_reservation_from_file()
+    mad_reservations = get_mad_reservations()
 
     first_reservation =
       mad_reservations
@@ -110,17 +110,36 @@ defmodule ElixirTechChallenge do
   # splits the content across new line characters,
   # sorts the content in descending order, takes out the words "RESERVATION"
   # in the list, and outputs only "MAD" reservations.
-  defp get_mad_reservation_from_file() do
-    {:ok, reservations} =
-      File.open(@input_file, [:read, :write], fn file ->
-        IO.read(file, :all)
-      end)
+  defp read_file() do
+    reservations =
+      case File.open(@input_file, [:read, :write], fn file ->
+             IO.read(file, :all)
+           end) do
+        {:ok, reservations} -> reservations
+        {:error, _reason} -> "File could not be read"
+      end
 
-    reservations
-    |> String.split("\n", trim: true)
-    |> Enum.sort_by(& &1, :desc)
-    |> Enum.take_while(fn value -> value != "RESERVATION" end)
-    |> Enum.take_while(fn value -> String.contains?(value, "MAD") == true end)
+    processed_file =
+      if reservations do
+        reservations
+        |> String.split("\n", trim: true)
+        |> Enum.sort_by(& &1, :desc)
+        |> Enum.take_while(fn value -> value != "RESERVATION" end)
+      else
+        "Something went wrong"
+      end
+
+    processed_file
+  end
+
+  defp get_mad_reservations do
+    file = read_file()
+
+    mad_reservations =
+      file
+      |> Enum.take_while(fn value -> String.contains?(value, "MAD") == true end)
+
+    mad_reservations
   end
 
   # This function reads the content of the input file,
@@ -129,18 +148,9 @@ defmodule ElixirTechChallenge do
   # get all BCN reservations by subtracting the list MAD reservations from the list of all reservations,
   # the result will be the list of only BCN reservations
   defp get_bcn_reservations_from_file() do
-    {:ok, reservations} =
-      File.open(@input_file, [:read, :write], fn file ->
-        IO.read(file, :all)
-      end)
+    file = read_file()
 
-    all_reservations =
-      reservations
-      |> String.split("\n", trim: true)
-      |> Enum.sort_by(& &1, :desc)
-      |> Enum.take_while(fn value -> value != "RESERVATION" end)
-
-    bcn_reservations = all_reservations -- get_mad_reservation_from_file()
+    bcn_reservations = file -- get_mad_reservations()
 
     bcn_reservations
   end
