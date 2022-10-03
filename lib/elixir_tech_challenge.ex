@@ -3,7 +3,7 @@ defmodule ElixirTechChallenge do
   This module contains functions which processes a text file containing travel reservation information based on SVQ and formats it to a human readable format
 
   """
-  @input_file "./inpu.txt"
+  @input_file "./input.txt"
 
   @doc """
   Returns reservation informmation in human readable format.
@@ -33,7 +33,7 @@ defmodule ElixirTechChallenge do
 
   # After reading the input file and processing it's content we had to seperate
   # the MAD reservationns from the other reservations and format it for readability
-  defp read_and_format_mad_reservations() do
+  def read_and_format_mad_reservations() do
     mad_reservations = get_mad_reservations()
 
     first_reservation =
@@ -74,30 +74,42 @@ defmodule ElixirTechChallenge do
     bcn_reservations = get_bcn_reservations_from_file()
 
     first_reservation =
-      bcn_reservations
-      |> Enum.fetch!(1)
-      |> String.replace("SEGMENT:", "")
-      |> String.replace("->", "to")
-      |> String.replace("BCN", "")
-      |> String.replace("Flight SVQ", "Flight from SVQ to BCN at")
-      |> String.trim()
+      if is_list(bcn_reservations) == true do
+        bcn_reservations
+        |> Enum.fetch!(1)
+        |> String.replace("SEGMENT:", "")
+        |> String.replace("->", "to")
+        |> String.replace("BCN", "")
+        |> String.replace("Flight SVQ", "Flight from SVQ to BCN at")
+        |> String.trim()
+      else
+        "Sorry input file not found"
+      end
 
     second_reservation =
-      bcn_reservations
-      |> Enum.fetch!(0)
-      |> String.replace("SEGMENT:", "")
-      |> String.replace("->", "to")
-      |> String.replace("Hotel BCN", "Hotel at BCN on")
-      |> String.trim()
+      if is_list(bcn_reservations) == true do
+        bcn_reservations
+        |> Enum.fetch!(0)
+        |> String.replace("SEGMENT:", "")
+        |> String.replace("->", "to")
+        |> String.replace("Hotel BCN", "Hotel at BCN on")
+        |> String.trim()
+      else
+        "Sorry input file not found"
+      end
 
     third_reservation =
-      bcn_reservations
-      |> Enum.fetch!(2)
-      |> String.replace("SEGMENT:", "")
-      |> String.replace("->", "to")
-      |> String.replace("SVQ", "")
-      |> String.replace("Flight BCN", "Flight from BCN to SVQ at")
-      |> String.trim()
+      if is_list(bcn_reservations) do
+        bcn_reservations
+        |> Enum.fetch!(2)
+        |> String.replace("SEGMENT:", "")
+        |> String.replace("->", "to")
+        |> String.replace("SVQ", "")
+        |> String.replace("Flight BCN", "Flight from BCN to SVQ at")
+        |> String.trim()
+      else
+        "Sorry input file not found"
+      end
 
     concat_reservations =
       first_reservation <> "\n" <> second_reservation <> "\n" <> third_reservation <> "\n"
@@ -110,7 +122,7 @@ defmodule ElixirTechChallenge do
   # splits the content across new line characters,
   # sorts the content in descending order, takes out the words "RESERVATION"
   # in the list, and outputs only "MAD" reservations.
-  defp read_file() do
+  def read_file() do
     reservations =
       case File.open(@input_file, [:read, :write], fn file ->
              IO.read(file, :all)
@@ -136,8 +148,12 @@ defmodule ElixirTechChallenge do
     file = read_file()
 
     mad_reservations =
-      file
-      |> Enum.take_while(fn value -> String.contains?(value, "MAD") == true end)
+      if is_list(file) == true and Enum.empty?(file) == false do
+        file
+        |> Enum.take_while(fn value -> String.contains?(value, "MAD") == true end)
+      else
+        "could not read file"
+      end
 
     mad_reservations
   end
@@ -145,12 +161,17 @@ defmodule ElixirTechChallenge do
   # This function reads the content of the input file,
   # splits the content across new line characters,
   # sorts the content in descending order, and takes out the words "RESERVATION"
-  # get all BCN reservations by subtracting the list MAD reservations from the list of all reservations,
+  # get all BCN reservations by subtracting the list of MAD reservations from the list of all reservations,
   # the result will be the list of only BCN reservations
   defp get_bcn_reservations_from_file() do
     file = read_file()
 
-    bcn_reservations = file -- get_mad_reservations()
+    bcn_reservations =
+      if is_list(file) == true and Enum.empty?(file) == false do
+        file -- get_mad_reservations()
+      else
+        "Could not read file"
+      end
 
     bcn_reservations
   end
